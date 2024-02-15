@@ -1,5 +1,5 @@
-# glDoom Resurrected (again!)
-This repository contains improvements for the glDoom port by Bruce Lewis
+# ps2-glDoom Resurrected (again!)
+This repository contains the ps2 port of glDoom port by Bruce Lewis
 
 ### Fixes (original from REDPOWAR)
 * new floor/ceiling generation code (similar to code from Doom Legacy port)
@@ -41,6 +41,10 @@ I am planning for this port, the following (in order of priority)
 
 Plus more!
 
+### PS2-TODO List
+- Add debug screens
+- Add ps2 modules 
+
 ## Compiling
 
 ### Windows
@@ -49,6 +53,9 @@ Now it compiles on x64.
 
 ### Linux
 Run ``` sh build.sh ``` in the commandline to build.
+
+### Playstation 2
+Run ``` make all ``` in the commandline to build the ps2 elf executable.
 
 ### Game data
 Before playing DOOM, you will need to also create the gldoom.wad file by using the wadbuild tool (wadbuild.exe gldoom.lst) in the resources directory.
