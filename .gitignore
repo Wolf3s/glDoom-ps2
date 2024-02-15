@@ -13,6 +13,7 @@
 asm/
 obj/
 .vscode/
+glDoom.elf
 *.dll
 /DOOMSONG.MID
 /default.cfg
