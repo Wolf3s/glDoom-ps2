@@ -1,4 +1,4 @@
-// Emacs style mode select   -*- C++ -*- 
+// Emacs style mode select   -*- C -*- 
 //-----------------------------------------------------------------------------
 //
 // $Id:$
@@ -27,12 +27,11 @@
 #ifdef __PS2__
 #include <GL/gl.h>
 #else
-#include "thirdparty/glad/include/glad/glad.h"
+#include <glad/glad.h>
 #endif
 static const char rcsid[] = "$Id: am_map.c,v 1.4 1997/02/03 21:24:33 b1 Exp $";
 
 #include <stdio.h>
-
 
 #include "z_zone.h"
 #include "doomdef.h"
@@ -54,6 +53,7 @@ static const char rcsid[] = "$Id: am_map.c,v 1.4 1997/02/03 21:24:33 b1 Exp $";
 #include "dstrings.h"
 
 #include "am_map.h"
+#include "gldefs.h"
 
 void lfprintf(char *message, ... );
 
@@ -113,7 +113,7 @@ void lfprintf(char *message, ... );
 #define AM_NUMMARKPOINTS 10
 
 // scale on entry
-#define INITSCALEMTOF (.2*FRACUNIT)
+#define INITSCALEMTOF (2*FRACUNIT)
 // how much the automap moves window per tic in frame-buffer coordinates
 // moves 140 pixels in 1 second
 #define F_PANINC	4
@@ -160,6 +160,12 @@ typedef struct
 } islope_t;
 
 
+typedef struct
+{
+    unsigned char r;
+    unsigned char g;
+    unsigned char b;
+}MY_PAL;
 
 //
 // The vector graphics for the automap.
@@ -203,18 +209,18 @@ mline_t cheat_player_arrow[] = {
 
 #define R (FRACUNIT)
 mline_t triangle_guy[] = {
-    { { -.867*R, -.5*R }, { .867*R, -.5*R } },
-    { { .867*R, -.5*R } , { 0, R } },
-    { { 0, R }, { -.867*R, -.5*R } }
+    { { -867*R, -5*R }, { 867*R, -5*R } },
+    { { 867*R, -5*R } , { 0, R } },
+    { { 0, R }, { -867*R, -5*R } }
 };
 #undef R
 #define NUMTRIANGLEGUYLINES (sizeof(triangle_guy)/sizeof(mline_t))
 
 #define R (FRACUNIT)
 mline_t thintriangle_guy[] = {
-    { { -.5*R, -.7*R }, { R, 0 } },
-    { { R, 0 }, { -.5*R, .7*R } },
-    { { -.5*R, .7*R }, { -.5*R, -.7*R } }
+    { { -5*R, -7*R }, { R, 0 } },
+    { { R, 0 }, { -5*R, 7*R } },
+    { { -5*R, 7*R }, { -5*R, -7*R } }
 };
 #undef R
 #define NUMTHINTRIANGLEGUYLINES (sizeof(thintriangle_guy)/sizeof(mline_t))
@@ -315,13 +321,6 @@ extern dboolean viewactive;
 //extern byte screens[][SCREENWIDTH*SCREENHEIGHT];
 
 
-typedef struct
-   {
-    unsigned char r;
-    unsigned char g;
-    unsigned char b;
-   }MY_PAL;
-
 extern MY_PAL  statpal[256];
 
 void
@@ -340,13 +339,13 @@ AM_getIslope
 ( mline_t*	ml,
   islope_t*	is )
 {
-    int dx, dy;
+    fixed_t dx, dy;
 
     dy = ml->a.y - ml->b.y;
     dx = ml->b.x - ml->a.x;
-    if (!dy) is->islp = (dx<0?-MAXINT:MAXINT);
+    if (!dy) is->islp = (dx<0?-DMAXINT:DMAXINT);
     else is->islp = FixedDiv(dx, dy);
-    if (!dx) is->slp = (dy<0?-MAXINT:MAXINT);
+    if (!dx) is->slp = (dy<0?-DMAXINT:DMAXINT);
     else is->slp = FixedDiv(dy, dx);
 
 }
@@ -422,8 +421,8 @@ void AM_findMinMaxBoundaries(void)
     fixed_t a;
     fixed_t b;
 
-    min_x = min_y =  MAXINT;
-    max_x = max_y =  MININT;
+    min_x = min_y =  DMAXINT;
+    max_x = max_y =  DMININT;
   
     for (i=0;i<numvertexes;i++)
     {
@@ -460,7 +459,7 @@ void AM_changeWindowLoc(void)
     if (m_paninc.x || m_paninc.y)
     {
 	followplayer = 0;
-	f_oldloc.x = MAXINT;
+	f_oldloc.x = DMAXINT;
     }
 
     m_x += m_paninc.x;
@@ -492,7 +491,7 @@ void AM_initVariables(void)
     automapactive = true;
     fb = screens[0];
 
-    f_oldloc.x = MAXINT;
+    f_oldloc.x = DMAXINT;
     amclock = 0;
     lightlev = 0;
 
@@ -730,7 +729,7 @@ dboolean AM_Responder( event_t *ev )
         if (ev->data1 == key_map_follow)
            {
             followplayer = !followplayer;
-            f_oldloc.x = MAXINT;
+            f_oldloc.x = DMAXINT;
             plr->message = followplayer ? AMSTR_FOLLOWON : AMSTR_FOLLOWOFF;
            }
         else
@@ -907,9 +906,9 @@ dboolean AM_clipMline( mline_t *ml, fline_t *fl )
        TOP    = 8
       };
     
-    register	outcode1 = 0;
-    register	outcode2 = 0;
-    register	outside;
+    register int outcode1 = 0;
+    register int outcode2 = 0;
+    register int outside;
     
     fpoint_t	tmp;
     int		dx;

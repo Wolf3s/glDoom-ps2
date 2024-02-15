@@ -24,17 +24,16 @@
 #ifdef __PS2__
 #include <GL/gl.h>
 #else
-#include "thirdparty/glad/include/glad/glad.h"
+#include <glad/glad.h>
 #endif
 #include <SDL.h>
-
 #include <stdlib.h>
 #include <math.h>
 
 #include "doomtype.h"
 #include "sys_sdl.h"
 #include "gl_video.h"
-#include "sdl_inpt.h"
+#include "sdl_input.h"
 #include "sdl_video.h"
 
 #include "doomstat.h"
@@ -84,7 +83,7 @@ dboolean             software = false;
 
 glmode_t             glmode;
 
-double               glFovY;    // Rendering field of view
+float               glFovY;    // Rendering field of view
 float                SetBack;   // 3D setback for 2D displays
 float                glLeft, glTop, glRight, glBottom, glAspect;
 
@@ -121,10 +120,9 @@ void I_Start2DFrame()
 
    }
 
-#ifdef __PS2__
 //hack for gluPerspective taken from: https://www.gamedev.net/forums/topic/180495-glfrustum-and-glperspective-difference/
-void w3sgluPerspective(GLdouble fovy, GLdouble aspect, GLdouble zNear, GLdouble zFar) 
-{
+
+void w3sgluPerspective(GLdouble fovy, GLdouble aspect, GLdouble zNear, GLdouble zFar) {
     GLdouble top, bottom, left, right;
     double pi180 = 0.017453292519943295769236907684886;
     top = zNear * tan(pi180 * fovy / 2);
@@ -135,8 +133,7 @@ void w3sgluPerspective(GLdouble fovy, GLdouble aspect, GLdouble zNear, GLdouble 
     glLoadIdentity();
     glFrustum(left, right, bottom, top, zNear, zFar);
     glMatrixMode(GL_MODELVIEW);
-}   
-#endif
+}
 
 void I_Start3DFrame()
 {
@@ -145,11 +142,8 @@ void I_Start3DFrame()
 
     glMatrixMode( GL_PROJECTION );
     glLoadIdentity();
-#ifdef __PS2__
-   void w3sgluPerspective(GLdouble fovy, GLdouble aspect, GLdouble zNear, GLdouble zFar); 
-#else
-    gluPerspective((double)glFovY, (double)glAspect, (double)video.nearclip, (double)video.farclip );
-#endif
+
+    w3sgluPerspective((double)glFovY, (double)glAspect, (double)video.nearclip, (double)video.farclip );
     glViewport( 0, 0, video.width, video.height);
 
     glTranslatef( 0.0f, 0.0f, 2.0f );
@@ -160,7 +154,7 @@ void I_Start3DFrame()
 
     glTranslatef( 0.0f, 0.0f, 0.0f );
 
-    SetBack  = -120.0f / tanf(DEG2RAD(glFovY * 0.5f));
+    SetBack  = -120.0f / tanf((float)DEG2RAD(glFovY * 0.5f));
     SetBack -= 2.0f;
 
     glTop    = 120.0f;
@@ -327,9 +321,7 @@ dboolean StartUpOpenGL()
     }
 
     SDL_GL_MakeCurrent(pWindow, glContext);
-#ifdef __PS2__
-
-#else
+#ifndef __PS2__
     if (gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress) < 0)
     {
         printf("Failed to load OpenGL library!\n");

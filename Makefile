@@ -2,7 +2,7 @@ EE_BIN = glDoom.elf
 
 EE_OBJS = am_map.o d_console.o d_items.o d_main.o d_net.o doomdef.o doomstat.o doomlib.o dstrings.o \
 entity.o f_finale.o f_wipe.o \
-g_game.o GL_utils.o gl_video.o gl_wipe.o glsbar.o \
+g_game.o gl_ps2functions.o gl_utils.o gl_video.o gl_wipe.o glsbar.o \
 hu_lib.o hu_stuff.o \
 i_net.o i_sdlmusic.o i_sdlsound.o i_sound.o i_system.o info.o m_argv.o m_bbox.o \
 m_cheat.o m_fixed.o m_menu.o m_misc.o m_random.o m_swap.o mathlib.o mmus2mid.o p_ceilng.o \
@@ -17,7 +17,8 @@ EE_LDFLAGS = -L$(PS2SDK)/ports/lib -L$(PS2SDK)/iop/lib/ -L$(PS2SDK)/ee/lib/ -L$(
 SDL2_LIBS = -lSDL2main -lSDL2_mixer -lSDL2 -lmodplug -lmikmod -logg -lopusfile -lopus -lstdc++ 
 PS2GL_LIBS = -lps2glut -lps2gl -lps2stuff
 EE_LIBS = $(SDL2_LIBS) $(PS2GL_LIBS) -lcdvd -lm -lps2ip -ldebug -lconfig -lmc -lc -lhdd -lpoweroff -lgskit -ldmakit -ldma -lps2_drivers -lps2_printf -lpatches 
-EE_CFLAGS = -Wall -D__PS2__
+EE_CFLAGS = -Wall -D__PS2__ -DIMPL
+EE_CXXFLAGS = -Wall -std=c++98
 
 # contains ee and iop modules 
 #EE_ASM_OBJS = asm/poweroff.c asm/freesio2.c asm/iomanX.c asm/sio2man.c asm/freepad.c \

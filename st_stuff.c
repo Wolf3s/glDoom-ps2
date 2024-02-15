@@ -1,4 +1,4 @@
-// Emacs style mode select   -*- C++ -*- 
+// Emacs style mode select   -*- C -*- 
 //-----------------------------------------------------------------------------
 //
 // $Id:$
@@ -31,7 +31,7 @@ rcsid[] = "$Id: st_stuff.c,v 1.6 1997/02/03 22:45:13 b1 Exp $";
 #ifdef __PS2__
 #include <GL/gl.h>
 #else
-#include "thirdparty/glad/include/glad/glad.h"
+#include <GL/gl.h>
 #endif
 
 #include <stdio.h>
@@ -1511,7 +1511,6 @@ void GL_DrawStatusBar0()
 
 void GL_DrawStatusBar1()
    {
-    float setbackh;
     int card;
 
     glColor4f(1.0f, 1.0f, 1.0f, 1.0f);

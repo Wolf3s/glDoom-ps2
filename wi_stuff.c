@@ -1,4 +1,4 @@
-// Emacs style mode select   -*- C++ -*- 
+// Emacs style mode select   -*- C -*- 
 //-----------------------------------------------------------------------------
 //
 // $Id:$
@@ -28,9 +28,8 @@
 #ifdef __PS2__
 #include <GL/gl.h>
 #else
-#include "thirdparty/glad/include/glad/glad.h"
+#include <glad/glad.h>
 #endif
-
 static const char
 rcsid[] = "$Id: wi_stuff.c,v 1.7 1997/02/03 22:45:13 b1 Exp $";
 
@@ -103,7 +102,7 @@ rcsid[] = "$Id: wi_stuff.c,v 1.7 1997/02/03 22:45:13 b1 Exp $";
 
 // NET GAME STUFF
 #define NG_STATSY		50
-#define NG_STATSX		(32 + SHORT(star->width)/2 + 32*!dofrags)
+#define NG_STATSX		(32 + DSHORT(star->width)/2 + 32*!dofrags)
 
 #define NG_SPACINGX    		64
 
@@ -567,13 +566,13 @@ void WI_drawLF(void)
     int y = WI_TITLEY+((SCREENHEIGHT-200)/2);
 
     // draw <LevelName> 
-    V_DrawPatch((SCREENWIDTH - SHORT(lnames[wbs->last]->width))/2,
+    V_DrawPatch((SCREENWIDTH - DSHORT(lnames[wbs->last]->width))/2,
 		y, FB, lnames[wbs->last]);
 
     // draw "Finished!"
-    y += (5*SHORT(lnames[wbs->last]->height))/4;
+    y += (5*DSHORT(lnames[wbs->last]->height))/4;
     
-    V_DrawPatch((SCREENWIDTH - SHORT(finished->width))/2,
+    V_DrawPatch((SCREENWIDTH - DSHORT(finished->width))/2,
 		y, FB, finished);
 }
 
@@ -649,12 +648,12 @@ void WI_drawEL(void)
     int y = WI_TITLEY+((SCREENHEIGHT-200)/2);
 
     // draw "Entering"
-    V_DrawPatch((SCREENWIDTH - SHORT(entering->width))/2,y, FB, entering);
+    V_DrawPatch((SCREENWIDTH - DSHORT(entering->width))/2,y, FB, entering);
 
     // draw level
-    y += (5*SHORT(lnames[wbs->next]->height))/4;
+    y += (5*DSHORT(lnames[wbs->next]->height))/4;
 
-    V_DrawPatch((SCREENWIDTH - SHORT(lnames[wbs->next]->width))/2,y, FB, lnames[wbs->next]);
+    V_DrawPatch((SCREENWIDTH - DSHORT(lnames[wbs->next]->width))/2,y, FB, lnames[wbs->next]);
 
 }
 
@@ -662,10 +661,10 @@ void WI_drawEL(void)
 void GL_WI_drawOnLnode( int n, GLTexData *Tex)
    {
     int		i;
-    int		left;
-    int		top;
-    int		right;
-    int		bottom;
+    float		left;
+    float		top;
+    float		right;
+    float		bottom;
     dboolean	fits = false;
     float   Left, Bottom, Right, Top;
 
@@ -737,10 +736,10 @@ WI_drawOnLnode
     i = 0;
     do
     {
-	left = ((SCREENWIDTH-320)/2)+lnodes[wbs->epsd][n].x - SHORT(c[i]->leftoffset);
-	top = ((SCREENHEIGHT-200)/2)+lnodes[wbs->epsd][n].y - SHORT(c[i]->topoffset);
-	right = left + SHORT(c[i]->width);
-	bottom = top + SHORT(c[i]->height);
+	left = ((SCREENWIDTH-320)/2)+lnodes[wbs->epsd][n].x - DSHORT(c[i]->leftoffset);
+	top = ((SCREENHEIGHT-200)/2)+lnodes[wbs->epsd][n].y - DSHORT(c[i]->topoffset);
+	right = left + DSHORT(c[i]->width);
+	bottom = top + DSHORT(c[i]->height);
 
 	if (left >= 0
 	    && right < SCREENWIDTH
@@ -938,7 +937,7 @@ void WI_drawAnimatedBack(void)
 
 int GL_WI_drawNum( int x, int y, int n, int digits )
    {
-    int		fontwidth = SHORT(num[0]->width);
+    int		fontwidth = DSHORT(num[0]->width);
     int		neg;
     int		temp;
 
@@ -972,6 +971,7 @@ int GL_WI_drawNum( int x, int y, int n, int digits )
         return 0;
 
     // draw the new number
+#ifdef __PS2__
     while (digits--)
        {
         x -= fontwidth;
@@ -982,15 +982,28 @@ int GL_WI_drawNum( int x, int y, int n, int digits )
     // draw a minus sign if necessary
     if (neg)
        {
-        GL_DrawPatch(&WiMinus, x-=8, y);
+        GL_DrawPatch(&WiMinus, x-=8.0f, y);
+       }
+#else
+    while (digits--)
+       {
+        x -= fontwidth;
+        GL_DrawPatch(&WiNum[n % 10], (float)x, (float)y);
+        n /= 10;
        }
 
+    // draw a minus sign if necessary
+    if (neg)
+       {
+        GL_DrawPatch(&WiMinus, (float)x-=8, (float)y);
+       }
+#endif
     return x;
    }
 
 int WI_drawNum( int x, int y, int n, int digits )
    {
-    int		fontwidth = SHORT(num[0]->width);
+    int		fontwidth = DSHORT(num[0]->width);
     int		neg;
     int		temp;
 
@@ -1043,7 +1056,7 @@ void GL_WI_drawPercent( int x, int y, int p )
     if (p < 0)
         return;
 
-    GL_DrawPatch(&Percent, x, y);
+    GL_DrawPatch(&Percent, (float)x, (float)y);
     GL_WI_drawNum(x, y, p, -1);
    }
 
@@ -1076,13 +1089,13 @@ void GL_WI_drawTime( int x, int y, int t )
         do
            {
             n = (t / div) % 60;
-            x = GL_WI_drawNum(x, y, n, 2) - SHORT(colon->width);
+            x = GL_WI_drawNum(x, y, n, 2) - DSHORT(colon->width);
             div *= 60;
 
             // draw
             if (div==60 || t / div)
                {
-                GL_DrawPatch(&Colon, x, y);
+                GL_DrawPatch(&Colon, (float)x, (float)y);
                }
 	    
            } while (t / div);
@@ -1090,7 +1103,7 @@ void GL_WI_drawTime( int x, int y, int t )
     else
        {
         // "sucks"
-        GL_DrawPatch(&Sucks, x - SHORT(sucks->width), y); 
+        GL_DrawPatch(&Sucks, (float)x - DSHORT(sucks->width), (float)y);
        }
    }
 
@@ -1112,7 +1125,7 @@ void WI_drawTime( int x, int y, int t )
         do
            {
             n = (t / div) % 60;
-            x = WI_drawNum(x, y, n, 2) - SHORT(colon->width);
+            x = WI_drawNum(x, y, n, 2) - DSHORT(colon->width);
             div *= 60;
 
             // draw
@@ -1124,7 +1137,7 @@ void WI_drawTime( int x, int y, int t )
     else
        {
         // "sucks"
-        V_DrawPatch(x - SHORT(sucks->width), y, FB, sucks); 
+        V_DrawPatch(x - DSHORT(sucks->width), y, FB, sucks);
        }
    }
 
@@ -1432,14 +1445,14 @@ void GL_WI_drawDeathmatchStats(void)
 
     int    lh; // line height
 
-    lh = (3*SHORT(num[0]->height))/2;
+    lh = (3*DSHORT(num[0]->height))/2;
 
     // draw animated background
     GL_WI_drawAnimatedBack();
     
     GL_WI_drawLF();
 
-    GL_DrawPatch(&Total, (float)DM_TOTALSX-SHORT(total->width)/2, (float)DM_MATRIXY-WI_SPACINGY+10);
+    GL_DrawPatch(&Total, (float)DM_TOTALSX-DSHORT(total->width)/2, (float)DM_MATRIXY-WI_SPACINGY+10);
 
     GL_DrawPatch(&Killers, (float)DM_KILLERSX, (float)DM_KILLERSY);
     GL_DrawPatch(&Victims, (float)DM_VICTIMSX, (float)DM_VICTIMSY);
@@ -1452,12 +1465,12 @@ void GL_WI_drawDeathmatchStats(void)
        {
         if (playeringame[i])
            {
-            GL_DrawPatch(&gl_p[i], (float)(x-SHORT(p[i]->width)/2), (float)(DM_MATRIXY - WI_SPACINGY));
-            GL_DrawPatch(&gl_p[i], (float)(DM_MATRIXX-SHORT(p[i]->width)/2), (float)y);
+            GL_DrawPatch(&gl_p[i], (float)(x-DSHORT(p[i]->width)/2), (float)(DM_MATRIXY - WI_SPACINGY));
+            GL_DrawPatch(&gl_p[i], (float)(DM_MATRIXX-DSHORT(p[i]->width)/2), (float)y);
             if (i == me)
                {
-                GL_DrawPatch(&BStar, (float)(x-SHORT(bstar->width)/2), (float)(DM_MATRIXY - WI_SPACINGY));
-                GL_DrawPatch(&Star, (float)(DM_MATRIXX-SHORT(star->width)/2), (float)y );
+                GL_DrawPatch(&BStar, (float)(x-DSHORT(bstar->width)/2), (float)(DM_MATRIXY - WI_SPACINGY));
+                GL_DrawPatch(&Star, (float)(DM_MATRIXX-DSHORT(star->width)/2), (float)y );
                }
            }
 /*
@@ -1473,7 +1486,7 @@ void GL_WI_drawDeathmatchStats(void)
 
     // draw stats
     y = DM_MATRIXY+10;
-    w = SHORT(num[0]->width);
+    w = DSHORT(num[0]->width);
 
     for (i = 0; i < MAXPLAYERS; i++)
        {
@@ -1513,7 +1526,7 @@ void WI_drawDeathmatchStats(void)
     WI_drawLF();
 
     // draw stat titles (top line)
-    V_DrawPatch(((SCREENWIDTH-320)/2)+DM_TOTALSX-SHORT(total->width)/2,
+    V_DrawPatch(((SCREENWIDTH-320)/2)+DM_TOTALSX-DSHORT(total->width)/2,
 		((SCREENHEIGHT-200)/2)+DM_MATRIXY-WI_SPACINGY+10,
 		FB,
 		total);
@@ -1529,24 +1542,24 @@ void WI_drawDeathmatchStats(void)
     {
 	if (playeringame[i])
 	{
-	    V_DrawPatch(((SCREENWIDTH-320)/2)+x-SHORT(p[i]->width)/2,
+	    V_DrawPatch(((SCREENWIDTH-320)/2)+x-DSHORT(p[i]->width)/2,
 			((SCREENHEIGHT-200)/2)+DM_MATRIXY - WI_SPACINGY,
 			FB,
 			p[i]);
 	    
-	    V_DrawPatch(((SCREENWIDTH-320)/2)+DM_MATRIXX-SHORT(p[i]->width)/2,
+	    V_DrawPatch(((SCREENWIDTH-320)/2)+DM_MATRIXX-DSHORT(p[i]->width)/2,
 			((SCREENHEIGHT-200)/2)+y,
 			FB,
 			p[i]);
 
 	    if (i == me)
 	    {
-		V_DrawPatch(((SCREENWIDTH-320)/2)+x-SHORT(p[i]->width)/2,
+		V_DrawPatch(((SCREENWIDTH-320)/2)+x-DSHORT(p[i]->width)/2,
 			    ((SCREENHEIGHT-200)/2)+DM_MATRIXY - WI_SPACINGY,
 			    FB,
 			    bstar);
 
-		V_DrawPatch(((SCREENWIDTH-320)/2)+DM_MATRIXX-SHORT(p[i]->width)/2,
+		V_DrawPatch(((SCREENWIDTH-320)/2)+DM_MATRIXX-DSHORT(p[i]->width)/2,
 			    ((SCREENHEIGHT-200)/2)+y,
 			    FB,
 			    star);
@@ -1565,7 +1578,7 @@ void WI_drawDeathmatchStats(void)
 
     // draw stats
     y = DM_MATRIXY+10;
-    w = SHORT(num[0]->width);
+    w = DSHORT(num[0]->width);
 
     for (i=0 ; i<MAXPLAYERS ; i++)
     {
@@ -1777,7 +1790,7 @@ void GL_WI_drawNetgameStats(void)
     int i;
     int x;
     int y;
-    int pwidth = SHORT(percent->width);
+    int pwidth = DSHORT(percent->width);
 
     // draw animated background
     GL_WI_drawAnimatedBack(); 
@@ -1785,19 +1798,19 @@ void GL_WI_drawNetgameStats(void)
     GL_WI_drawLF();
 
     // draw stat titles (top line)
-    GL_DrawPatch(&Kills, (float)(NG_STATSX+NG_SPACINGX-SHORT(kills->width)), (float)NG_STATSY);
+    GL_DrawPatch(&Kills, (float)(NG_STATSX+NG_SPACINGX-DSHORT(kills->width)), (float)NG_STATSY);
 
-    GL_DrawPatch(&Items, (float)(NG_STATSX+2*NG_SPACINGX-SHORT(items->width)), (float)NG_STATSY);
+    GL_DrawPatch(&Items, (float)(NG_STATSX+2*NG_SPACINGX-DSHORT(items->width)), (float)NG_STATSY);
 
-    GL_DrawPatch(&Secret, (float)(NG_STATSX+3*NG_SPACINGX-SHORT(secret->width)), (float)NG_STATSY);
+    GL_DrawPatch(&Secret, (float)(NG_STATSX+3*NG_SPACINGX-DSHORT(secret->width)), (float)NG_STATSY);
     
     if (dofrags)
        {
-        GL_DrawPatch(&Frags, (float)(NG_STATSX+4*NG_SPACINGX-SHORT(frags->width)), (float)NG_STATSY);
+        GL_DrawPatch(&Frags, (float)(NG_STATSX+4*NG_SPACINGX-DSHORT(frags->width)), (float)NG_STATSY);
        }
 
     // draw stats
-    y = NG_STATSY + SHORT(kills->height);
+    y = NG_STATSY + DSHORT(kills->height);
 
     for (i = 0; i < MAXPLAYERS; i++)
        {
@@ -1805,11 +1818,11 @@ void GL_WI_drawNetgameStats(void)
             continue;
 
         x = NG_STATSX;
-        GL_DrawPatch(&gl_p[i], (float)(x-SHORT(p[i]->width)), (float)y);
+        GL_DrawPatch(&gl_p[i], (float)(x-DSHORT(p[i]->width)), (float)y);
 
         if (i == me)
            {
-            GL_DrawPatch(&Star, (float)(x-((SHORT(p[i]->width)+SHORT(star->width))/2)), (float)y);
+            GL_DrawPatch(&Star, (float)(x-((DSHORT(p[i]->width)+DSHORT(star->width))/2)), (float)y);
            }
 
         x += NG_SPACINGX;
@@ -1835,7 +1848,7 @@ void WI_drawNetgameStats(void)
     int		i;
     int		x;
     int		y;
-    int		pwidth = SHORT(percent->width);
+    int		pwidth = DSHORT(percent->width);
 
     WI_slamBackground();
     
@@ -1845,21 +1858,21 @@ void WI_drawNetgameStats(void)
     WI_drawLF();
 
     // draw stat titles (top line)
-    V_DrawPatch(((SCREENWIDTH-320)/2)+NG_STATSX+NG_SPACINGX-SHORT(kills->width),
+    V_DrawPatch(((SCREENWIDTH-320)/2)+NG_STATSX+NG_SPACINGX-DSHORT(kills->width),
 		((SCREENHEIGHT-200)/2)+NG_STATSY, FB, kills);
 
-    V_DrawPatch(((SCREENWIDTH-320)/2)+NG_STATSX+2*NG_SPACINGX-SHORT(items->width),
+    V_DrawPatch(((SCREENWIDTH-320)/2)+NG_STATSX+2*NG_SPACINGX-DSHORT(items->width),
 		((SCREENHEIGHT-200)/2)+NG_STATSY, FB, items);
 
-    V_DrawPatch(((SCREENWIDTH-320)/2)+NG_STATSX+3*NG_SPACINGX-SHORT(secret->width),
+    V_DrawPatch(((SCREENWIDTH-320)/2)+NG_STATSX+3*NG_SPACINGX-DSHORT(secret->width),
 		((SCREENHEIGHT-200)/2)+NG_STATSY, FB, secret);
     
     if (dofrags)
-	V_DrawPatch(((SCREENWIDTH-320)/2)+NG_STATSX+4*NG_SPACINGX-SHORT(frags->width),
+	V_DrawPatch(((SCREENWIDTH-320)/2)+NG_STATSX+4*NG_SPACINGX-DSHORT(frags->width),
 		    ((SCREENHEIGHT-200)/2)+NG_STATSY, FB, frags);
 
     // draw stats
-    y = ((SCREENHEIGHT-200)/2)+NG_STATSY + SHORT(kills->height);
+    y = ((SCREENHEIGHT-200)/2)+NG_STATSY + DSHORT(kills->height);
 
     for (i=0 ; i<MAXPLAYERS ; i++)
     {
@@ -1867,10 +1880,10 @@ void WI_drawNetgameStats(void)
 	    continue;
 
 	x = ((SCREENWIDTH-320)/2)+NG_STATSX;
-	V_DrawPatch(x-SHORT(p[i]->width), y, FB, p[i]);
+	V_DrawPatch(x-DSHORT(p[i]->width), y, FB, p[i]);
 
 	if (i == me)
-	    V_DrawPatch(x-SHORT(p[i]->width), y, FB, star);
+	    V_DrawPatch(x-DSHORT(p[i]->width), y, FB, star);
 
 	x += NG_SPACINGX;
 	WI_drawPercent(x-pwidth, y+10, cnt_kills[i]);	x += NG_SPACINGX;
@@ -2042,7 +2055,7 @@ void GL_WI_drawStats(void)
     // line height
     int lh;	
 
-    lh = (3*SHORT(num[0]->height))/2;
+    lh = (3*DSHORT(num[0]->height))/2;
 
     // draw animated background
     GL_WI_drawAnimatedBack();
@@ -2073,7 +2086,7 @@ void WI_drawStats(void)
     // line height
     int lh;	
 
-    lh = (3*SHORT(num[0]->height))/2;
+    lh = (3*DSHORT(num[0]->height))/2;
 
     WI_slamBackground();
 
@@ -2090,8 +2103,11 @@ void WI_drawStats(void)
 
     V_DrawPatch(((SCREENWIDTH-320)/2)+SP_STATSX, SP_STATSY+2*lh, FB, sp_secret);
     WI_drawPercent((SCREENWIDTH-((SCREENWIDTH-320)/2))-SP_STATSX, SP_STATSY+2*lh, cnt_secret[0]);
-
+#ifdef __PS2__
     V_DrawPatch(((SCREENWIDTH-320)/2)+SP_TIMEX, SP_TIMEY, FB, dtime);
+#else
+    V_DrawPatch(((SCREENWIDTH-320)/2)+SP_TIMEX, SP_TIMEY, FB, time);
+#endif
     WI_drawTime(((SCREENWIDTH-320)/2)+160-SP_TIMEX, SP_TIMEY, cnt_time);
 
     if (wbs->epsd < 3)
@@ -2506,8 +2522,11 @@ void WI_loadData(void)
     colon = W_CacheLumpName("WICOLON", PU_STATIC); 
 
     // "time"
+#ifdef __PS2__
     dtime = W_CacheLumpName("WITIME", PU_STATIC);   
-
+#else
+    time = W_CacheLumpName("WITIME", PU_STATIC);   
+#endif
     // "sucks"
     sucks = W_CacheLumpName("WISUCKS", PU_STATIC);  
 
@@ -2589,7 +2608,11 @@ void WI_unloadData(void)
     Z_ChangeTag(sp_secret, PU_CACHE);
     Z_ChangeTag(items, PU_CACHE);
     Z_ChangeTag(frags, PU_CACHE);
+#ifdef __PS2__
     Z_ChangeTag(dtime, PU_CACHE);
+#else
+    Z_ChangeTag(time, PU_CACHE);
+#endif
     Z_ChangeTag(sucks, PU_CACHE);
     Z_ChangeTag(par, PU_CACHE);
 

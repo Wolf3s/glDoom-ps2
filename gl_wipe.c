@@ -37,7 +37,7 @@
 #ifdef __PS2__
 #include <GL/gl.h>
 #else
-#include <glad.h>
+#include <glad/glad.h>
 #endif
 #include <stdlib.h>
 extern video_t  video;
