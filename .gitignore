@@ -10,6 +10,9 @@
 *.suo
 *.dbg
 .vs/
+asm/
+obj/
+.vscode/
 *.dll
 /DOOMSONG.MID
 /default.cfg
