@@ -1,8 +1,8 @@
 /*
 ** File: gl_ps2functions.h
-** Project: glDoom Re
+** Project: glDoom Re-ps2
 ** Author: André Guilherme
-** Creation Date: 08/30/2023
+** Creation Date: 02/14/2024
 ** Description:
 ** Adds some unused ps2gl implementations and add unsupported OpenGL 1.2 functions 
 ** License: Public domain/ID License 

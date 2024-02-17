@@ -429,7 +429,7 @@ void Cleanup()
 
 dboolean CreateMainWindow(int width, int height, int bpp, dboolean fullscreen)
 {
-    if (SDL_Init(SDL_INIT_VIDEO) < 0)
+    if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
         I_Error("Failed to init SDL");
  
 #ifdef _DEBUG
