@@ -70,8 +70,11 @@ rcsid[] = "$Id: g_game.c,v 1.8 1997/02/03 22:45:09 b1 Exp $";
 
 #include "doomcmd.h"
 
+#ifdef __PS2__
+#include <SDL.h>
+#else
 #include "thirdparty/SDL2/include/SDL.h"
-
+#endif
 
 #define SAVEGAMESIZE	0x2c0000
 #define SAVESTRINGSIZE	24

@@ -21,6 +21,7 @@
 #include <sbv_patches.h>
 #include <sifrpc.h>
 #include <loadfile.h>
+#include <kernel.h>
 #define NEWLIB_PORT_AWARE
 #include <fileXio.h>
 #include <fileio.h>
@@ -242,6 +243,7 @@ int main(int argc, char** szCmdLine)
     ClearLog(szDbgName);
 #ifdef __PS2__
     reset_IOP();
+    init_scr();
 #endif
     // parse up the command line...
     ParseCommand(argc, szCmdLine);

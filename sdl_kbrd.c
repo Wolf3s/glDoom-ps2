@@ -5,8 +5,11 @@
 // and shutting down the keyboard interface and DirectInput.
 
 #include <stdio.h>
+#ifdef __PS2__
+#include <SDL.h>
+#else
 #include "thirdparty/SDL2/include/SDL.h"
-
+#endif
 #include "doomtype.h"
 #include "d_main.h"
 #include "d_event.h"

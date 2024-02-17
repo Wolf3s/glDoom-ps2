@@ -22,9 +22,13 @@
 #include <string.h>
 #include <ctype.h>
 
+#ifdef __PS2__
+#include <SDL.h>
+#include <SDL_mixer.h>
+#else
 #include "thirdparty/SDL2/include/SDL.h"
 #include "thirdparty/SDL2/include/SDL_mixer.h"
-
+#endif
 #include "doomtype.h"
 #include "mmus2mid.h"
 

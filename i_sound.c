@@ -19,8 +19,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#ifdef __PS2__
+#include <SDL_mixer.h>
+#else
 #include "thirdparty/SDL2/include/SDL_mixer.h"
-
+#endif
 #include "doomtype.h"
 
 #include "i_sound.h"

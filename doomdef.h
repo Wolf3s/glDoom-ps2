@@ -25,8 +25,11 @@
 
 #include <stdio.h>
 #include <string.h>
+#ifdef __PS2__
+#include <SDL.h>
+#else
 #include "thirdparty/SDL2/include/SDL.h"
-
+#endif
 //
 // Global parameters/defines.
 //

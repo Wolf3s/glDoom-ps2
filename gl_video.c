@@ -321,7 +321,7 @@ dboolean StartUpOpenGL()
     }
 
     SDL_GL_MakeCurrent(pWindow, glContext);
-#ifndef __PS2__
+#ifndef __PS2__ //André´s TODO: add PS2GL layer instead of GLAD.
     if (gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress) < 0)
     {
         printf("Failed to load OpenGL library!\n");
