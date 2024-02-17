@@ -8,13 +8,8 @@
 ** License: Public domain/ID License 
 */
 
-#include "gl_ps2functions.h"
-#include <ps2s/debug_macros.h>
-
-#define mNotImplemented(_msg, _args...) mWarn("(in %s) not implemented" _msg, __FUNCTION__, ##_args)
-
-//#define GL_FUNC_DEBUG printf
-#define GL_FUNC_DEBUG(msg, ...)
+#include <GL/gl.h>
+#include <ps2gl/debug.h>
 
 void glFogi(GLenum pname,
             GLint param)

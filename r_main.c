@@ -28,7 +28,6 @@ static const char rcsid[] = "$Id: r_main.c,v 1.5 1997/02/03 22:45:12 b1 Exp $";
 
 #ifdef __PS2__
 #include <GL/gl.h>
-#include "gl_ps2functions.h"
 #else
 #include <glad/glad.h>
 #endif

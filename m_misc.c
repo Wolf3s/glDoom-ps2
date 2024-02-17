@@ -30,7 +30,6 @@ rcsid[] = "$Id: m_misc.c,v 1.6 1997/02/03 22:45:10 b1 Exp $";
 #ifdef __PS2__
 #include <SDL.h>
 #include <GL/gl.h>
-#include "gl_ps2functions.h"
 #else
 #include "thirdparty/SDL2/include/SDL.h"
 #include <glad/glad.h>
