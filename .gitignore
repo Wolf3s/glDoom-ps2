@@ -10,7 +10,7 @@
 *.suo
 *.dbg
 .vs/
-asm/
+modules/
 obj/
 .vscode/
 glDoom.elf

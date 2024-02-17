@@ -14,12 +14,16 @@
 #else
 #include <glad/glad.h>
 #endif
-#ifdef __PS2__
-#define SDL_MAIN_HANDLED
-#endif
 #include <SDL.h>
 #ifdef __PS2__
 #include <debug.h>
+#include <libmc.h>
+#include <sbv_patches.h>
+#include <sifrpc.h>
+#include <loadfile.h>
+#define NEWLIB_PORT_AWARE
+#include <fileXio.h>
+#include <fileio.h>
 #endif
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -161,6 +165,17 @@ char      szDbgName[] = "glDoom.dbg";
     extern unsigned int size_##_T
 
 IMPORT_BIN2C(iomanX_irx);
+IMPORT_BIN2C(fileXio_irx);
+IMPORT_BIN2C(sio2man_irx);
+IMPORT_BIN2C(mcman_irx);
+IMPORT_BIN2C(mcserv_irx);
+IMPORT_BIN2C(padman_irx);
+IMPORT_BIN2C(libsd_irx);
+IMPORT_BIN2C(usbd_irx);
+//IMPORT_BIN2C(usb_mass_irx);
+IMPORT_BIN2C(bdm_irx);
+IMPORT_BIN2C(bdmfs_fatfs_irx);
+IMPORT_BIN2C(usbmass_bd_irx);
 
 #define LOAD_IRX(_irx, argc, arglist) \
     ID = SifExecModuleBuffer(&_irx, size_##_irx, argc, arglist, &RET); \
@@ -168,7 +183,57 @@ IMPORT_BIN2C(iomanX_irx);
     sleep(8000);
 #define LOAD_IRX_NARG(_irx) LOAD_IRX(_irx, 0, NULL)
 
+static void reset_IOP() {
+	SifInitRpc(0);
+	#if !defined(DEBUG) || defined(BUILD_FOR_PCSX2)
+	/* Comment this line if you don't wanna debug the output */
+	while(!SifIopReset("", 0)){};
+	#endif
+	while(!SifIopSync()){};
+	SifInitRpc(0);
+	sbv_patch_enable_lmb();
+	sbv_patch_disable_prefix_check();
+}
+
+static void initMC(void)
+{
+   int ret;
+   // mc variables
+   int mc_Type, mc_Free, mc_Format;
+
+   
+   printf("initMC: Initializing Memory Card\n");
+
+   ret = mcInit(MC_TYPE_XMC);
+   
+   if( ret < 0 ) {
+	printf("initMC: failed to initialize memcard server.\n");
+   } else {
+       printf("initMC: memcard server started successfully.\n");
+   }
+   
+   // Since this is the first call, -1 should be returned.
+   // makes me sure that next ones will work !
+   mcGetInfo(0, 0, &mc_Type, &mc_Free, &mc_Format); 
+   mcSync(MC_WAIT, NULL, &ret);
+}
+
+static void waitUntilUsbDeviceIsReady() {
+  struct stat buffer;
+  int ret = -1;
+  int retries = 50;
+
+  while (ret != 0 && retries > 0) {
+    ret = stat("mass:/", &buffer);
+    /* Wait until the device is ready */
+    nopdelay();
+
+    retries--;
+  }
+}
+
 #endif
+
 int main(int argc, char** szCmdLine)
    {
 #ifdef __PS2__
@@ -176,14 +241,27 @@ int main(int argc, char** szCmdLine)
 #endif      
     ClearLog(szDbgName);
 #ifdef __PS2__
-   init_scr();
-   SifInitRpc(0);
-	sbv_patch_enable_lmb(); 
-   LOAD_IRX_NARG(iomanX_irx);
+    reset_IOP();
 #endif
     // parse up the command line...
     ParseCommand(argc, szCmdLine);
-
+#ifdef __PS2__
+    LOAD_IRX_NARG(iomanX_irx);
+    LOAD_IRX_NARG(fileXio_irx);
+    fileXioInit();
+    LOAD_IRX_NARG(sio2man_irx);
+    LOAD_IRX_NARG(mcman_irx);
+    LOAD_IRX_NARG(mcserv_irx);
+    initMC();
+    LOAD_IRX_NARG(padman_irx);
+    LOAD_IRX_NARG(libsd_irx);
+    LOAD_IRX_NARG(usbd_irx);
+    //Here would add DS4/DS3 support.
+    LOAD_IRX_NARG(bdm_irx);
+    LOAD_IRX_NARG(bdmfs_fatfs_irx);
+    LOAD_IRX_NARG(usbmass_bd_irx);
+    waitUntilUsbDeviceIsReady();
+#endif
     FindResponseFile();
 
     InitData();

@@ -13,12 +13,15 @@ r_main.o r_plane.o r_segs.o r_sky.o r_things.o s_sound.o savepic.o sdl_input.o s
 st_lib.o st_stuff.o sys_sdl.o tables.o v_video.o w_wad.o wi_stuff.o z_zone.o \
 
 EE_INCS = -I$(PS2SDK)/ee/include -I$(PS2SDK)/ports/include/SDL2 -I$(PS2SDK)/ports/include -I$(GSKIT)/include -I$(GSKIT)/ee/dma/include -I$(GSKIT)/ee/gs/include -I$(GSKIT)/ee/toolkit/include 
-EE_LDFLAGS = -L$(PS2SDK)/ports/lib -L$(PS2SDK)/iop/lib/ -L$(PS2SDK)/ee/lib/ -L$(PS2DEV)/gsKit/lib 
+EE_LDFLAGS = -L$(PS2SDK)/ports/lib -L$(PS2SDK)/iop/lib/ -L$(PS2SDK)/ee/lib/ -L$(PS2DEV)/gsKit/lib -fdata-sections -ffunction-sections -flto -Wl,--gc-sections
 SDL2_LIBS = -lSDL2main -lSDL2_mixer -lSDL2 -lmodplug -lmikmod -logg -lopusfile -lopus -lstdc++ 
-PS2GL_LIBS = -lps2glut -lps2gl -lps2stuff
-EE_LIBS = $(SDL2_LIBS) $(PS2GL_LIBS) -lcdvd -lm -lps2ip -ldebug -lconfig -lmc -lc -lhdd -lpoweroff -lgskit -ldmakit -ldma -lps2_drivers -lps2_printf -lpatches 
-EE_CFLAGS = -Wall -D__PS2__ -DIMPL
+PS2GL_LIBS = -lps2glut -lps2gl -lps2stuff 
+# -lps2ip -lcdvd -lhdd -lpoweroff 
+IOP_MODULES_LIBS = -lfileXio -lmc -lpad
+EE_LIBS = $(IOP_MODULES_LIBS) $(SDL2_LIBS) $(PS2GL_LIBS) -lm -ldebug -lc -lgskit -ldmakit -ldma -lps2_drivers -lps2_printf -lpatches -lconfig
+EE_CFLAGS = -Wall -D__PS2__ -DIMPL -fdata-sections -ffunction-sections -flto
 EE_CXXFLAGS = -Wall -std=c++98
+
 
 # contains ee and iop modules 
 #EE_ASM_OBJS = asm/poweroff.c asm/freesio2.c asm/iomanX.c asm/sio2man.c asm/freepad.c \
@@ -26,23 +29,57 @@ asm/mcman_irx.c asm/mcserv_irx.c asm/ps2dev9.c asm/ps2atad.c asm/ps2fs_irx.c asm
 asm/ps2ip-nm.c asm/ps2ips.c asm/netman.c asm/smap.c asm/ps2http.c asm/usbd_irx.c asm/usbhdfsd_irx.c \
 asm/usbmass_bd.c
 
-EE_ASM_OBJS = asm/iomanX.c
+EE_C_OBJS = modules/iomanX.c modules/fileXio.c modules/sio2man.c modules/mcman_irx.c modules/mcserv_irx.c modules/padman_irx.c modules/libsd_irx.c modules/usbd_irx.c modules/bdm.c \
+modules/bdmfs_fatfs.c modules/usbmass_bd.c
 
-EE_ASM_DIR = asm/
+EE_C_DIR = modules/
 
 EE_OBJS_DIR = obj/
 
-BIN2S = $(PS2SDK)/bin/bin2c
+BIN2C = $(PS2SDK)/bin/bin2c
 
-$(EE_ASM_DIR):
+$(EE_C_DIR):
 	@mkdir -p $@
 
 $(EE_OBJS_DIR):
 	@mkdir -p $@
 	mv $(EE_OBJS) obj/
 
-all: $(EE_BIN) $(EE_ASM_DIR) $(EE_OBJS_DIR) $(EE_ASM_OBJS)
+all: $(EE_BIN) $(EE_C_DIR) $(EE_OBJS_DIR) $(EE_C_OBJS)
 	@echo "$$HEADER"
+
+modules/iomanX.c: $(PS2SDK)/iop/irx/iomanX.irx
+	$(BIN2C) $< $@ iomanX_irx 
+
+modules/fileXio.c: $(PS2SDK)/iop/irx/fileXio.irx
+	$(BIN2C) $< $@ fileXio_irx 
+
+modules/sio2man.c: $(PS2SDK)/iop/irx/sio2man.irx
+	$(BIN2C) $< $@ sio2man_irx 
+
+modules/mcman_irx.c: $(PS2SDK)/iop/irx/mcman.irx
+	$(BIN2C) $< $@ mcman_irx
+
+modules/mcserv_irx.c: $(PS2SDK)/iop/irx/mcserv.irx
+	$(BIN2C) $< $@ mcserv_irx
+
+modules/padman_irx.c: $(PS2SDK)/iop/irx/padman.irx
+	$(BIN2C) $< $@ padman_irx
+
+modules/libsd_irx.c: $(PS2SDK)/iop/irx/libsd.irx
+	$(BIN2C) $< $@ libsd_irx
+
+modules/usbd_irx.c: $(PS2SDK)/iop/irx/usbd.irx
+	$(BIN2C) $< $@ usbd_irx
+
+modules/bdm.c: $(PS2SDK)/iop/irx/bdm.irx
+	$(BIN2C) $< $@ bdm_irx
+
+modules/bdmfs_fatfs.c: $(PS2SDK)/iop/irx/bdmfs_fatfs.irx
+	$(BIN2C) $< $@ bdmfs_fatfs_irx
+
+modules/usbmass_bd.c: $(PS2SDK)/iop/irx/usbmass_bd.irx
+	$(BIN2C) $< $@ usbmass_bd_irx
 
 #poweroff Module
 asm/poweroff.c: $(PS2SDK)/iop/irx/poweroff.irx
@@ -51,21 +88,9 @@ asm/poweroff.c: $(PS2SDK)/iop/irx/poweroff.irx
 #IRX Modules
 asm/freesio2.c: $(PS2SDK)/iop/irx/freesio2.irx
 	$(BIN2S) $< $@ freesio2_irx
-	
-asm/iomanX.c: $(PS2SDK)/iop/irx/iomanX.irx
-	$(BIN2S) $< $@ iomanX_irx 
-
-asm/sio2man.c: $(PS2SDK)/iop/irx/sio2man.irx
-	$(BIN2S) $< $@ sio2man_irx
 
 asm/freepad.c: $(PS2SDK)/iop/irx/freepad.irx
 	$(BIN2S) $< $@ freepad_irx
-
-asm/mcman_irx.c: $(PS2SDK)/iop/irx/mcman.irx
-	$(BIN2S) $< $@ mcman_irx
-
-asm/mcserv_irx.c: $(PS2SDK)/iop/irx/mcserv.irx
-	$(BIN2S) $< $@ mcserv_irx
 
 asm/ps2dev9.c: $(PS2SDK)/iop/irx/ps2dev9.irx
 	$(BIN2S) $< $@ ps2dev9_irx 
@@ -93,15 +118,6 @@ asm/smap.c: $(PS2SDK)/iop/irx/smap.irx
 
 asm/ps2http.c: $(PS2SDK)/iop/irx/ps2http.irx 
 	$(BIN2S) $< $@ ps2http_irx
-
-asm/usbd_irx.c: $(PS2SDK)/iop/irx/usbd.irx
-	$(BIN2S) $< $@ usbd_irx
-
-asm/usbhdfsd_irx.c: $(PS2SDK)/iop/irx/usbhdfsd.irx
-	$(BIN2S) $< $@ usb_mass_irx
-
-asm/usbmass_bd.c: $(PS2SDK)/iop/irx/usbmass_bd.irx
-	$(BIN2S) $< $@ usbmass_bd_irx
 
 clean: 
 	rm -fr $(EE_BIN) $(EE_ASM_DIR) $(EE_OBJS_DIR)
