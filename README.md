@@ -44,6 +44,7 @@ I am planning for this port, the following (in order of priority)
 
 Plus more!
 ### PS2-TODO List
+- Fix ```gametic``` segmentation fault.
 
 ## Compiling
 

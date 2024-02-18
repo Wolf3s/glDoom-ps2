@@ -585,9 +585,11 @@ void MY_DoomLoop (void)
    {
     // frame syncronous IO operations
     I_StartFrame();
-#ifndef __PS2__         
+        
+
     // process one or more tics
     if (singletics) // used for demos
+
        {
         I_StartTic();
         D_ProcessEvents();
@@ -601,16 +603,19 @@ void MY_DoomLoop (void)
         CO_Ticker();
         M_Ticker();
         G_Ticker();
-
+#ifndef __PS2__
         gametic++;
+#endif
         maketic++;
        }
     else
        {
+#ifndef __PS2__
         TryRunTics(); // will run at least one tic
-       }
 #endif
+       }
     S_UpdateSounds (players[consoleplayer].mo);// move positional sounds
+  
     // Update display, next frame, with current state.
     D_Display();
    }
