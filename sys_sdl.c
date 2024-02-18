@@ -180,8 +180,8 @@ IMPORT_BIN2C(usbmass_bd_irx);
 
 #define LOAD_IRX(_irx, argc, arglist) \
     ID = SifExecModuleBuffer(&_irx, size_##_irx, argc, arglist, &RET); \
-    scr_printf("%s: id:%d, ret:%d\n", #_irx, ID, RET); \
-    sleep(8000);
+    scr_printf("%s: id:%d, ret:%d\n", #_irx, ID, RET); 
+
 #define LOAD_IRX_NARG(_irx) LOAD_IRX(_irx, 0, NULL)
 
 static void reset_IOP() {
@@ -270,11 +270,12 @@ int main(int argc, char** szCmdLine)
 
     // look at the command line parameters
     EvaluateParameters(szCmdLine);
-  
-    // Create the main program window, start up OpenGL and create our viewport
-    if (!CreateMainWindow(video.width, video.height, video.bpp, video.fullscreen))
-        I_Error("int main(): Unable to create main SDL2 window!");
 
+    // Create the main program window, start up OpenGL and create our viewport
+    if (!CreateMainWindow(video.width, video.height, video.bpp, video.fullscreen)) 
+    {
+        I_Error("int main(): Unable to create main SDL2 window!");    
+    }
     GetVideoInfo();
     GetModeList(szDbgName);
 
@@ -310,7 +311,7 @@ int main(int argc, char** szCmdLine)
     MY_DoomSetup();
 
     GameMode = GAME_START;
-
+#ifndef __PS2__ //Todo move this to other place.
     printf("Starting game loop...\n");
     while (!bQuit)
 	   {
@@ -328,7 +329,7 @@ int main(int argc, char** szCmdLine)
            GameMode = GAME_PLAY;
        }
     Cleanup();
-
+#endif
     return 0;
    }
 
@@ -429,7 +430,7 @@ void Cleanup()
 
 dboolean CreateMainWindow(int width, int height, int bpp, dboolean fullscreen)
 {
-    if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
+    if (SDL_Init(SDL_INIT_VIDEO) < 0)
         I_Error("Failed to init SDL");
  
 #ifdef _DEBUG
@@ -437,10 +438,13 @@ dboolean CreateMainWindow(int width, int height, int bpp, dboolean fullscreen)
 #else
     sprintf((char* const)window_title, "GLDOOM-RE");
 #endif
-
+#ifdef __PS2__
+    pWindow = SDL_CreateWindow((const char*)window_title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+        width, height, (fullscreen ? true : false));
+#else
     pWindow = SDL_CreateWindow((const char*)window_title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
         width, height, SDL_WINDOW_OPENGL | (fullscreen ? true : false) | SDL_WINDOW_INPUT_GRABBED | SDL_WINDOW_ALLOW_HIGHDPI);
-  
+#endif  
     SDL_SetRelativeMouseMode(SDL_TRUE);
     SDL_SetHintWithPriority(SDL_HINT_MOUSE_RELATIVE_MODE_WARP, "1", SDL_HINT_OVERRIDE);
 

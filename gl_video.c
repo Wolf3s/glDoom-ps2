@@ -23,6 +23,7 @@
 
 #ifdef __PS2__
 #include <GL/gl.h>
+#include <GL/glut.h>
 #else
 #include <glad/glad.h>
 #endif
@@ -64,7 +65,9 @@ void lfprintf(char *message, ... );
 // Game stuff
 
 extern SDL_Window* pWindow;
+#ifndef __PS2__
 SDL_GLContext glContext;
+#endif
 extern video_t     video;
 
 extern int         starttime;
@@ -93,8 +96,10 @@ extern int           iCurrMode;
 
 void ShutdownOpenGL(void)
    {
+#ifndef __PS2__
     SDL_GL_MakeCurrent(NULL, NULL);
     SDL_GL_DeleteContext(glContext);
+#endif
    }
 
 void I_ShutdownGraphics(void)
@@ -308,6 +313,9 @@ void OGL_Error( int GL_Code, char *msg )
 //  StartUpOpenGL sets the pixel format and a rendering context then returns true/false
 dboolean StartUpOpenGL()
    {
+#ifdef __PS2__
+    glutInit(NULL, NULL);
+#else
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
@@ -321,7 +329,6 @@ dboolean StartUpOpenGL()
     }
 
     SDL_GL_MakeCurrent(pWindow, glContext);
-#ifndef __PS2__ //André´s TODO: add PS2GL layer instead of GLAD.
     if (gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress) < 0)
     {
         printf("Failed to load OpenGL library!\n");

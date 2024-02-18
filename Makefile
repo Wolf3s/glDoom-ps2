@@ -18,7 +18,7 @@ SDL2_LIBS = -lSDL2main -lSDL2_mixer -lSDL2 -lmodplug -lmikmod -logg -lopusfile -
 PS2GL_LIBS = -lps2glut -lps2gl -lps2stuff 
 # -lps2ip -lcdvd -lhdd -lpoweroff 
 IOP_MODULES_LIBS = -lfileXio -lmc -lpad
-EE_LIBS = $(IOP_MODULES_LIBS) $(SDL2_LIBS) $(PS2GL_LIBS) -lm -ldebug -lc -lgskit -ldmakit -ldma -lps2_drivers -lps2_printf -lpatches -lconfig
+EE_LIBS = $(IOP_MODULES_LIBS) $(SDL2_LIBS) $(PS2GL_LIBS) -lm -ldebug -lc -lgskit -ldmakit -ldma -lps2_drivers -lpatches -lconfig
 EE_CFLAGS = -Wall -D__PS2__ -DIMPL -fdata-sections -ffunction-sections -flto -DNO_VU0_VECTORS -DNO_ASM
 EE_CXXFLAGS = $(EE_CFLAGS) -std=c++98
 

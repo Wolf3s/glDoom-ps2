@@ -58,11 +58,6 @@ static const char r;
 #endif
 #include <inttypes.h>
 
-#ifdef __PS2__
-#include <ps2_printf.h>
-#endif
-
-
 #include "doomdef.h"
 #include "doomstat.h"
 
@@ -1690,7 +1685,7 @@ void D_DoomMain (void)
     // init subsystems
     //printf ("V_Init: allocate screens.\n");
 #ifdef __PS2__
-    ps2_printf_XY("V_Init: allocate screens", 10, 20, 20);
+    scr_printf("V_Init: allocate screens.\n");
 #else
     printf("V_Init: allocate screens.\n");
 #endif
@@ -1699,7 +1694,7 @@ void D_DoomMain (void)
 
     //printf ("Z_Init: Init zone memory allocation daemon. \n");
 #ifdef __PS2__
-    ps2_printf("Z_init: Init zone memory allocation daemon. \n", 10, 20, 20);
+    scr_printf("Z_init: Init zone memory allocation daemon. \n");
 #else
     //printf ("Z_Init: Init zone memory allocation daemon. \n");
     printf("Z_init: Init zone memory allocation daemon. \n");
@@ -1707,7 +1702,11 @@ void D_DoomMain (void)
     Z_Init ();
 
     //printf ("W_Init: Init WADfiles.\n");
+#ifdef __PS2__
+    scr_printf("W_Init: Init WADfiles.\n");
+#else
     printf("W_Init: Init WADfiles.\n");
+#endif
     W_InitMultipleFiles(wadfiles);
     
     if (CheckGameMode() == false)
@@ -1848,50 +1847,96 @@ void D_DoomMain (void)
     CreateGLPalette();
 
     //printf ("M_Init: Init miscellaneous info.\n");
+#ifdef __PS2__
+    scr_printf("M_Init: Init miscellaneous info.\n");
+#else
     printf("M_Init: Init miscellaneous info.\n");
+#endif
     M_Init();
 
     //printf ("R_Init: Init DOOM refresh daemon - ");
+#ifdef __PS2__
+    scr_printf("R_Init: Init DOOM refresh daemon - ");
+#else
     printf("R_Init: Init DOOM refresh daemon - ");
+#endif
     R_Init();
 
     //printf ("\nP_Init: Init Playloop state.\n");
+#ifdef __PS2__
+    scr_printf("\nP_Init: Init Playloop state.\n");
+#else
     printf("\nP_Init: Init Playloop state.\n");
+#endif
     P_Init();
 
     //con_printf("WS_Init: Init weapon sprites.\n");
     //WS_Init();
-
+#ifdef __PS2__
+    scr_printf("WS_Init: Init sprites - ");
+#else
     printf("WS_Init: Init sprites - ");
+#endif
     LoadAllSprites();
 
+#ifdef __PS2__
+    scr_printf("I_Init: Setting up machine state.\n");
+#else
     printf("I_Init: Setting up machine state.\n");
+#endif
     I_Init();
 
+#ifdef __PS2__
+    scr_printf("D_CheckNetGame: Checking network game status.\n");
+#else
     printf("D_CheckNetGame: Checking network game status.\n");
+#endif
     D_CheckNetGame();
     if (gamemode == netabort)
        {
         return;
        }
 
-
+#ifdef __PS2__
+    scr_printf("S_Init: Setting up sound.\n");
+#else
     printf("S_Init: Setting up sound.\n");
+#endif
     S_Init(snd_SfxVolume, snd_MusicVolume);
 
+#ifdef __PS2__
     printf("HU_Init: Setting up heads up display.\n");
+#else
+    printf("HU_Init: Setting up heads up display.\n");
+#endif
     HU_Init();
 
+#ifdef __PS2__
+    scr_printf("ST_Init: Init status bar.\n");
+#else
     printf("ST_Init: Init status bar.\n");
+#endif
     ST_Init();
 
+#ifdef __PS2__
+    scr_printf("CO_Init: Init console.\n");
+#else
     printf("CO_Init: Init console.\n");
+#endif
     CO_Init();
 
+#ifdef __PS2__
+    scr_printf("WI_Init: Init game widgets.\n");
+#else
     printf("WI_Init: Init game widgets.\n");
+#endif
     WI_Init();
 
+#ifdef __PS2__
+    scr_printf("F_Init: Init game finale.\n");
+#else
     printf("F_Init: Init game finale.\n");
+#endif
     F_Init();
 
     // check for a driver that wants intermission stats
