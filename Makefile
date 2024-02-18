@@ -121,7 +121,7 @@ asm/ps2http.c: $(PS2SDK)/iop/irx/ps2http.irx
 	$(BIN2S) $< $@ ps2http_irx
 
 clean: 
-	rm -fr $(EE_BIN) $(EE_ASM_DIR) $(EE_OBJS_DIR)
+	rm -fr $(EE_BIN) $(EE_C_DIR) $(EE_OBJS_DIR)
 run:
 	cd bin; ps2client -h $(PS2LINK_IP) execee host$(EE_BIN)
 
