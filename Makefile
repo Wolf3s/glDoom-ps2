@@ -13,13 +13,14 @@ r_main.o r_plane.o r_segs.o r_sky.o r_things.o s_sound.o savepic.o sdl_input.o s
 st_lib.o st_stuff.o sys_sdl.o tables.o v_video.o w_wad.o wi_stuff.o z_zone.o \
 
 EE_INCS = -I$(PS2SDK)/ee/include -I$(PS2SDK)/ports/include/SDL2 -I$(PS2SDK)/ports/include -I$(GSKIT)/include -I$(GSKIT)/ee/dma/include -I$(GSKIT)/ee/gs/include -I$(GSKIT)/ee/toolkit/include 
-EE_LDFLAGS = -L$(PS2SDK)/ports/lib -L$(PS2SDK)/iop/lib/ -L$(PS2SDK)/ee/lib/ -L$(PS2DEV)/gsKit/lib -fdata-sections -ffunction-sections -flto -Wl,--gc-sections
+EE_LDFLAGS = -L$(PS2SDK)/ports/lib -L$(PS2SDK)/iop/lib/ -L$(PS2SDK)/ee/lib/ -L$(PS2DEV)/gsKit/lib -Wno-strict-aliasing -Wno-conversion-null -fdata-sections -ffunction-sections -flto -Wl,--gc-sections
 SDL2_LIBS = -lSDL2main -lSDL2_mixer -lSDL2 -lmodplug -lmikmod -logg -lopusfile -lopus -lstdc++ 
 PS2GL_LIBS = -lps2glut -lps2gl -lps2stuff 
 # -lps2ip -lcdvd -lhdd -lpoweroff 
 IOP_MODULES_LIBS = -lfileXio -lmc -lpad
+PS2GL_CFLAGS = -DNO_VU0_VECTORS -DNO_ASM
 EE_LIBS = $(IOP_MODULES_LIBS) $(SDL2_LIBS) $(PS2GL_LIBS) -lm -ldebug -lc -lgskit -ldmakit -ldma -lps2_drivers -lpatches -lconfig
-EE_CFLAGS = -Wall -D__PS2__ -DIMPL -fdata-sections -ffunction-sections -flto -DNO_VU0_VECTORS -DNO_ASM
+EE_CFLAGS = -Wall -D__PS2__ -DIMPL $(PS2GL_CFLAGS) -Wno-strict-aliasing -Wno-conversion-null  -fdata-sections -ffunction-sections -flto
 EE_CXXFLAGS = $(EE_CFLAGS) -std=c++98
 
 

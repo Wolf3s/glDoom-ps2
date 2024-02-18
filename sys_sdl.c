@@ -311,25 +311,27 @@ int main(int argc, char** szCmdLine)
     MY_DoomSetup();
 
     GameMode = GAME_START;
-#ifndef __PS2__ //Todo move this to other place.
+#ifdef __PS2__
+    scr_printf("Starting game loop...\n");
+#else
     printf("Starting game loop...\n");
+#endif
     while (!bQuit)
 	   {
-
         // check for user input
         I_GetEvent();
-
+ 
         if (GameMode == GAME_PLAY)
-           MY_DoomLoop();
+           MY_DoomLoop();           
         else
         if (GameMode == GAME_QUIT)
            I_Quit();
         else
         if (GameMode == GAME_START)
-           GameMode = GAME_PLAY;
+           GameMode = GAME_PLAY;  
        }
     Cleanup();
-#endif
+
     return 0;
    }
 

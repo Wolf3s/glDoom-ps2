@@ -191,7 +191,6 @@ void I_StartTic (void)
    {
     // If the mouse has been captured (windowed mode)
     // return the mouse to the center of the screen here
-
 	I_GetEvent();
    }
 
