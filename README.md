@@ -44,7 +44,11 @@ I am planning for this port, the following (in order of priority)
 
 Plus more!
 ### PS2-TODO List
-- Fix ```gametic``` segmentation fault.
+I am planning for this port, the following (in order of priority)
+
+- Fix ```gametic``` segmentation fault
+- Add ps2 joystick support
+- Fix undefined time variable at wi_stuff.c
 
 ## Compiling
 
@@ -53,8 +57,9 @@ Use the Visual Studio project and build for your desired architecture.
 
 ### Linux
 Run ``` sh build.sh ``` in the commandline to build.
+
 ### Playstation 2
-Run ``` make all ``` in the commandline to build the ps2 elf executable.
+Run ``` make all ``` in the commandline to build the ps2 ```.elf``` executable.
 
 ### Game data
 Before playing DOOM, you will need to also create the ```gldoom.wad ``` file by using the wadbuild tool (wadbuild.exe gldoom.lst) in the resources directory.

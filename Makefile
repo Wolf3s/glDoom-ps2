@@ -20,7 +20,7 @@ PS2GL_LIBS = -lps2glut -lps2gl -lps2stuff
 IOP_MODULES_LIBS = -lfileXio -lmc -lpad
 PS2GL_CFLAGS = -DNO_VU0_VECTORS -DNO_ASM
 EE_LIBS = $(IOP_MODULES_LIBS) $(SDL2_LIBS) $(PS2GL_LIBS) -lm -ldebug -lc -lgskit -ldmakit -ldma -lps2_drivers -lpatches -lconfig
-EE_CFLAGS = -Wall -D__PS2__ -DIMPL $(PS2GL_CFLAGS) -Wno-strict-aliasing -Wno-conversion-null  -fdata-sections -ffunction-sections -flto
+EE_CFLAGS = -Wall -D__PS2__ $(PS2GL_CFLAGS) -Wno-strict-aliasing -Wno-conversion-null  -fdata-sections -ffunction-sections -flto
 EE_CXXFLAGS = $(EE_CFLAGS) -std=c++98
 
 

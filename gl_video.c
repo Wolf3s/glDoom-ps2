@@ -339,7 +339,9 @@ dboolean StartUpOpenGL()
 
     glmode = gl_2d;
 
+#ifndef __PS2__
     GetGLInfo();
+#endif
 
     return true;
 }

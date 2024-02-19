@@ -180,7 +180,7 @@ IMPORT_BIN2C(usbmass_bd_irx);
 
 #define LOAD_IRX(_irx, argc, arglist) \
     ID = SifExecModuleBuffer(&_irx, size_##_irx, argc, arglist, &RET); \
-    scr_printf("%s: id:%d, ret:%d\n", #_irx, ID, RET); 
+    printf("%s: id:%d, ret:%d\n", #_irx, ID, RET); 
 
 #define LOAD_IRX_NARG(_irx) LOAD_IRX(_irx, 0, NULL)
 
