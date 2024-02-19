@@ -292,8 +292,11 @@ int main(int argc, char** szCmdLine)
        }
 
     bQuit = false;
-
+#ifdef __PS2__
+    scr_printf("Beginning DOOM code startup...\n");
+#else
     printf("Beginning DOOM code startup...\n");
+#endif
     D_DoomMain();
     if ((gamemode == netabort) || (gamemode == undetermined))
        {
@@ -305,9 +308,13 @@ int main(int argc, char** szCmdLine)
            }
         return 0;
        }
-
+#ifdef __PS2__
+    scr_printf("Command line: %s\n", szCmdLine);
+    printf("Beginning DOOM data setup...\n");
+#else
     printf("Command line: %s\n", szCmdLine);
     printf("Beginning DOOM data setup...\n");
+#endif
     MY_DoomSetup();
 
     GameMode = GAME_START;
@@ -458,9 +465,13 @@ dboolean CreateMainWindow(int width, int height, int bpp, dboolean fullscreen)
     SDL_ShowWindow(pWindow);
 
     R_InitViewData();
-
+#ifdef __PS2__
+    scr_printf("glDoom Re Version %d.%d%c\n", version/100, version%100, revision);
+    scr_printf("Starting OpenGL...\n");
+#else
     printf("glDoom Re Version %d.%d%c\n", version/100, version%100, revision);
     printf("Starting OpenGL...\n");
+#endif
     SDL_ShowCursor(SDL_DISABLE);
 
     if (StartUpOpenGL() == false)
