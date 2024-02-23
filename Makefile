@@ -2,7 +2,7 @@ EE_BIN = glDoom.elf
 
 EE_OBJS = am_map.o d_console.o d_items.o d_main.o d_net.o doomdef.o doomstat.o doomlib.o dstrings.o \
 entity.o f_finale.o f_wipe.o \
-g_game.o gl_ps2functions.o gl_utils.o gl_video.o gl_wipe.o glsbar.o \
+g_game.o gl_utils.o gl_video.o gl_wipe.o glsbar.o \
 hu_lib.o hu_stuff.o \
 i_net.o i_sdlmusic.o i_sdlsound.o i_sound.o i_system.o info.o m_argv.o m_bbox.o \
 m_cheat.o m_fixed.o m_menu.o m_misc.o m_random.o m_swap.o mathlib.o mmus2mid.o p_ceilng.o \
