@@ -98,6 +98,9 @@ static const char r;
 #include "gldefs.h"
 #include "gl_video.h"
 #include "doomlib.h"
+#ifdef __PS2__
+#include <debug.h>
+#endif
 
 void WS_Init(void);
 void LoadAllSprites(void);

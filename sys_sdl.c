@@ -23,8 +23,9 @@
 #include <loadfile.h>
 #include <kernel.h>
 #define NEWLIB_PORT_AWARE
-#include <fileXio.h>
+#include <fileXio_rpc.h>
 #include <fileio.h>
+#include <loadfile.h>
 #endif
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -186,11 +187,13 @@ IMPORT_BIN2C(usbmass_bd_irx);
 
 static void reset_IOP() {
 	SifInitRpc(0);
+#if 0
 	#if !defined(DEBUG) || defined(BUILD_FOR_PCSX2)
 	/* Comment this line if you don't wanna debug the output */
 	while(!SifIopReset("", 0)){};
 	#endif
 	while(!SifIopSync()){};
+#endif
 	SifInitRpc(0);
 	sbv_patch_enable_lmb();
 	sbv_patch_disable_prefix_check();
